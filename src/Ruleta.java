@@ -1,4 +1,4 @@
-public class Ruleta {
+public class Ruleta extends Thread{
     private static int turno = 0;
     private static int ultimoNumGanador=-1;
     public static void sortearNumero(){

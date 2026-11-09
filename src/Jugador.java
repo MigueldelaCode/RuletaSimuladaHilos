@@ -11,15 +11,18 @@ public class Jugador extends Thread{
     private String[] color = {"negro","rojo"};
     private int numApostado=-1;
     private String colorGanador = null;
+    private boolean actualizarJugador = false;
     public Jugador(){
         contador++;
         this.id = contador;
     }
+
     public Jugador(String tipo){
         contador++;
         this.id = contador;
         this.tipoJugador=tipo;
     }
+
     public  void realizarApuestas(){
         if (tipoJugador == null){
             colorApostado = null;
@@ -39,6 +42,14 @@ public class Jugador extends Thread{
 
         }
         this.turno++;
+    }
+
+    public boolean isActualizarJugador() {
+        return actualizarJugador;
+    }
+
+    public void setActualizarJugador(boolean actualizarJugador) {
+        this.actualizarJugador = actualizarJugador;
     }
 
     public static int getTurno() {
@@ -92,77 +103,73 @@ public class Jugador extends Thread{
 
     @Override
     public void run() {
-        ultimoNumeroGanador = Ruleta.getUltimoNumGanador();
-        if (ultimoNumeroGanador==-1 || (numApostado == -1 && colorApostado == null)) {
-            realizarApuestas();
-        }
-        else{
-            if (tipoJugador==null){
-                if (ultimoNumeroGanador == numApostado){
+        if (this.actualizarJugador) {
+            ultimoNumeroGanador = Ruleta.getUltimoNumGanador();
+            actualizarJugador = false;
+            if (this.tipoJugador == null) {
+                if (ultimoNumeroGanador == numApostado) {
                     System.out.println("El jugador ha ganado una apuesta a número apostando al: " + numApostado);
-                    this.dineroJugador = Monitor.bancaPagaJugador(this.dineroJugador,this.apuesta, null,this.id);
-                }
-                else{
+                    this.dineroJugador = Monitor.bancaPagaJugador(this.dineroJugador, this.apuesta, null, this.id);
+                } else {
                     System.out.println("El jugador " + this.id + " ha perdido una apuesta a numero apostando a " + numApostado);
-                    this.dineroJugador = Monitor.jugadorPagaBanca(this.dineroJugador,this.apuesta,this.id);
+                    this.dineroJugador = Monitor.jugadorPagaBanca(this.dineroJugador, this.apuesta, this.id);
                 }
-                if (this.apuesta<=this.dineroJugador){
-                    realizarApuestas();//Una vez termina de comprobar el turno anterior realiza otra apuesta
-                }
-                else{
+                if (this.apuesta <= this.dineroJugador) {
+                    System.out.println("El jugador " + this.id + " puede seguir jugando");
+                } else {
                     System.out.println("El jugador no puede apostar");
                     levantarse = true;
                 }
-            }
-            else if (tipoJugador.equals("color")){
-                if (ultimoNumeroGanador == 0){
+            } else if (tipoJugador.equals("color")) {
+                if (ultimoNumeroGanador == 0) {
                     colorGanador = "verde";
-                }
-                else if(ultimoNumeroGanador%2==0){
+                } else if (ultimoNumeroGanador % 2 == 0) {
                     colorGanador = "rojo";
-                }
-                else{
+                } else {
                     colorGanador = "negro";
                 }
-                if (colorGanador.equals(colorApostado)){
+                if (colorGanador.equals(colorApostado)) {
                     System.out.println("El jugador " + this.id + " ha ganado una apuesta a color apostando a " + colorApostado);
-                    this.dineroJugador = Monitor.bancaPagaJugador(this.dineroJugador,this.apuesta,this.tipoJugador,this.id);
-                }
-                else{
+                    this.dineroJugador = Monitor.bancaPagaJugador(this.dineroJugador, this.apuesta, this.tipoJugador, this.id);
+                } else {
                     System.out.println("El jugador " + this.id + " ha perdido una apuesta a color apostando a " + colorApostado);
-                    this.dineroJugador = Monitor.jugadorPagaBanca(this.dineroJugador,this.apuesta,this.id);
+                    this.dineroJugador = Monitor.jugadorPagaBanca(this.dineroJugador, this.apuesta, this.id);
                 }
-                if (this.apuesta<=this.dineroJugador){
-                    realizarApuestas();//Una vez termina de comprobar el turno anterior realiza otra apuesta
-                }
-                else{
+                if (this.apuesta <= this.dineroJugador) {
+                    System.out.println("El jugador " + this.id + " puede seguir jugando");
+                } else {
                     System.out.println("El jugador no puede apostar");
-                    levantarse=true;
+                    levantarse = true;
                 }
-
-            }
-            else if (tipoJugador.equals("martin")){
-                if (ultimoNumeroGanador == numApostado){
+            } else if (tipoJugador.equals("martin")) {
+                if (ultimoNumeroGanador == numApostado) {
                     System.out.println("El jugador ha ganado una apuesta a número apostando al: " + numApostado);
-                    this.dineroJugador = Monitor.bancaPagaJugador(this.dineroJugador,this.apuesta, null,this.id);
+                    this.dineroJugador = Monitor.bancaPagaJugador(this.dineroJugador, this.apuesta, null, this.id);
                     this.apuesta = 10.00;
-                }
-                else{
+                } else {
                     System.out.println("El jugador " + this.id + " ha perdido una apuesta a numero apostando a " + numApostado);
-                    this.dineroJugador = Monitor.jugadorPagaBanca(this.dineroJugador,this.apuesta,this.id);
-                    this.apuesta = this.apuesta*2;
+                    this.dineroJugador = Monitor.jugadorPagaBanca(this.dineroJugador, this.apuesta, this.id);
+                    this.apuesta = this.apuesta * 2;
                 }
-                if (this.apuesta<=this.dineroJugador){
-                    realizarApuestas();//Una vez termina de comprobar el turno anterior realiza otra apuesta
+                if (this.apuesta <= this.dineroJugador) {
+                    System.out.println("El jugador " + this.id + " puede seguir jugando");
                 }
-                else{
+                else {
                     System.out.println("El jugador no puede apostar");
                     levantarse = true;
                 }
             }
+
+        }
+
+        else{
+            realizarApuestas();
+
+
 
         }
     }
+
 
 
 }
