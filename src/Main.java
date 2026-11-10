@@ -28,7 +28,8 @@ public class Main {
                 hilo.join();
             }
             //El sleep tiene que simular 3000 ms en los que se sientan los jugadores revisar en casa
-
+            System.out.println("La ruleta se tirara en 10 segundos");
+            Thread.sleep(3000);
             Ruleta.sortearNumero();
             //Se comprueban los premios
             for(int i=0; i<jugadores.length; i++){
